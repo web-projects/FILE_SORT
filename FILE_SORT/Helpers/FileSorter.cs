@@ -44,6 +44,10 @@ namespace FILE_SORT.Helpers
                         File.WriteAllLines(fileOutPath, logList);
                         result = true;
                     }
+                    else
+                    {
+                        Console.WriteLine($"FILE [{fileInPath}] - not found!");
+                    }
                 }
             }
             catch (Exception ex)

@@ -48,17 +48,16 @@ namespace APP_CONFIG
 
             if (filePayload.Count() > 0)
             {
-                List<string> fileIn = new List<string>();
-                List<string> fileOut = new List<string>();
-                List<string> sortOrder = new List<string>();
-
                 int index = 0;
+                List<string> fileIn = new List<string>();
                 fileIn.AddRange(from value in filePayload
                                 select filePayload.ElementAt(index++).fileIn);
                 index = 0;
+                List<string> fileOut = new List<string>();
                 fileOut.AddRange(from value in filePayload
                                  select filePayload.ElementAt(index++).fileOut);
                 index = 0;
+                List<string> sortOrder = new List<string>();
                 sortOrder.AddRange(from value in filePayload
                                    select filePayload.ElementAt(index++).sortOrder);
 
