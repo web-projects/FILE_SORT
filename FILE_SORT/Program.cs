@@ -1,15 +1,15 @@
 ﻿using FILE_SORT.Helpers;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace APP_CONFIG
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             Console.WriteLine($"\r\n==========================================================================================");
             Console.WriteLine($"{Assembly.GetEntryAssembly().GetName().Name} - Version {Assembly.GetEntryAssembly().GetName().Version}");
@@ -17,7 +17,7 @@ namespace APP_CONFIG
 
             IConfiguration configuration = ConfigurationLoad();
 
-            (string fileIn, string fileOut, string sortOrder) fileToSort = LoadFileToSort(configuration, 0);
+            List<Tuple<string, string, string>> fileToSort = LoadFileToSort(configuration);
             FileSorter.FileSort(fileToSort);
         }
 
@@ -31,8 +31,8 @@ namespace APP_CONFIG
 
             return configuration;
         }
-        
-        static (string, string, string) LoadFileToSort(IConfiguration configuration, int index)
+
+        static List<Tuple<string, string, string>> LoadFileToSort(IConfiguration configuration)
         {
             var filePayload = configuration.GetSection("FileGroup")
                      .GetChildren()
@@ -44,17 +44,33 @@ namespace APP_CONFIG
                          sortOrder = x.GetValue<string>("SortOrder")
                      });
 
-            (string fileIn, string fileOut, string sortOrder) result = (null, null, null);
+            List<Tuple<string, string, string>> results = new List<Tuple<string, string, string>>();
 
-            // Is there a matching item?
-            if (filePayload.Count() > index)
+            if (filePayload.Count() > 0)
             {
-               result.fileIn = filePayload.ElementAt(index).fileIn;
-               result.fileOut = filePayload.ElementAt(index).fileOut;
-               result.sortOrder = filePayload.ElementAt(index).sortOrder;
+                List<string> fileIn = new List<string>();
+                List<string> fileOut = new List<string>();
+                List<string> sortOrder = new List<string>();
+
+                int index = 0;
+                fileIn.AddRange(from value in filePayload
+                                select filePayload.ElementAt(index++).fileIn);
+                index = 0;
+                fileOut.AddRange(from value in filePayload
+                                 select filePayload.ElementAt(index++).fileOut);
+                index = 0;
+                sortOrder.AddRange(from value in filePayload
+                                   select filePayload.ElementAt(index++).sortOrder);
+
+                foreach (var combinedOutput in fileIn
+                    .Zip(fileOut, (vc, vv) => Tuple.Create(vc, vv))
+                    .Zip(sortOrder, (vcvv, o) => Tuple.Create(vcvv.Item1, vcvv.Item2, o)))
+                {
+                    results.Add(combinedOutput);
+                }
             }
 
-            return result;
+            return results;
         }
     }
 }

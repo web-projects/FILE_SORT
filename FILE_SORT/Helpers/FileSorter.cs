@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace FILE_SORT.Helpers
 {
     public static class FileSorter
     {
-        public static bool FileSort((string fileIn, string fileOut, string sortOrder) fileToSort)
+        public static bool FileSort(List<Tuple<string, string, string>> fileToSort)
         {
             bool result = false;
 
@@ -22,29 +21,32 @@ namespace FILE_SORT.Helpers
                     Directory.CreateDirectory(targetDir);
                 }
 
-                string fileInPath = Path.Combine(targetDir, fileToSort.fileIn);
-
-                if (File.Exists(fileInPath))
+                foreach ((string fileIn, string fileOut, string sortOrder) in fileToSort)
                 {
-                    string[] logFile = File.ReadAllLines(fileInPath);
-                    List<string> logList = new List<string>(logFile);
-                    logList.Sort(StringComparer.OrdinalIgnoreCase);
-                    switch (fileToSort.sortOrder)
+                    string fileInPath = Path.Combine(targetDir, fileIn);
+
+                    if (File.Exists(fileInPath))
                     {
-                        //case "ascending":
-                        //    logList.Sort(StringComparer.OrdinalIgnoreCase);
-                        //    break;
-                        case "descending":
+                        string[] logFile = File.ReadAllLines(fileInPath);
+                        List<string> logList = new List<string>(logFile);
+                        logList.Sort(StringComparer.OrdinalIgnoreCase);
+                        switch (sortOrder)
+                        {
+                            //case "ascending":
+                            //    logList.Sort(StringComparer.OrdinalIgnoreCase);
+                            //    break;
+                            case "descending":
                             logList.Reverse();
                             logList.Sort(StringComparer.OrdinalIgnoreCase);
                             break;
+                        }
+                        string fileOutPath = Path.Combine(targetDir, fileOut);
+                        File.WriteAllLines(fileOutPath, logList);
+                        result = true;
                     }
-                    string fileOutPath = Path.Combine(targetDir, fileToSort.fileOut);
-                    File.WriteAllLines(fileOutPath, logList);
-                    result = true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Exception in fileReader={ex.Message}");
             }
