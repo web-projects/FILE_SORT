@@ -1,12 +1,12 @@
 # README #
 
-This an applicationto test Priority Queues.
+This an application to sort files.
 
 ### What is this repository for? ###
 
-* PRIORITY QUEUES
+* FILE SORT
 * 1.00.0.(100)
-* git remote add origin https://github.com/web-projects/PRIORITY_QUEUES.git
+* git remote add origin https://github.com/web-projects/FILE_SORT.git
 
 ### How do I get set up? ###
 
@@ -30,5 +30,4 @@ This an applicationto test Priority Queues.
    
 ### HISTORY ###
 
-* 20220525 - Initial repository.
-* 20220526 - Multi-file support.
+* 20220526 - Initial repository.
